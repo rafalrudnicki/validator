@@ -25,7 +25,7 @@ class NipValidator extends ConstraintValidator
             $intSum += $arrSteps[$i] * $value[$i];
         } $int = $intSum % 11;
         $intControlNr = ($int == 10) ? 0 : $int;
-        if ($intControlNr == $str[9]) {
+        if ($intControlNr == $value[9]) {
             return true;
         }
         $this->context->buildViolation($constraint->message)
