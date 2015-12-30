@@ -19,6 +19,29 @@ class NipValidator extends ConstraintValidator
                     ->addViolation();
 
         }
+        
+        $fakeVal = array(
+		'0000000000',
+                '1111111111',
+                '2222222222',
+                '3333333333',
+                '4444444444',
+                '5555555555',
+                '6666666666',
+                '7777777777',
+                '8888888888',
+                '9999999999',
+                '0123456789',
+                '9876543210',
+                '1234567890'
+		);
+        
+        if (in_array($value, $fakeVal)) {
+            $this->context->buildViolation($constraint->message)
+                    ->setParameter('%string%', $value)
+                    ->addViolation();
+        }
+        
         $arrSteps = array(6, 5, 7, 2, 3, 4, 5, 6, 7);
         $intSum = 0;
         for ($i = 0; $i < 9; $i++) {
