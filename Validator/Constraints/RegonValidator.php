@@ -8,26 +8,40 @@ use Symfony\Component\Validator\ConstraintValidator;
 class RegonValidator extends ConstraintValidator {
 
     public function validate($value, Constraint $constraint) {
+        
         if ($value == '') {
-            return true;
-        }
-        if (strlen($value) != 9) {
             $this->context->buildViolation($constraint->message)
-                    ->setParameter('%string%', $value)
-                    ->addViolation();
+            ->setParameter('%string%', $value)
+            ->addViolation();
         }
-        $arrSteps = array(8, 9, 2, 3, 4, 5, 6, 7);
-        $intSum = 0;
-        for ($i = 0; $i < 8; $i++) {
-            $intSum += $arrSteps[$i] * $value[$i];
-        } $int = $intSum % 11;
-        $intControlNr = ($int == 10) ? 0 : $int;
-        if ($intControlNr == $value[8]) {
-            return true;
-        }
-        $this->context->buildViolation($constraint->message)
+        
+        $value = preg_replace("/[^0-9]+/", "", $value);
+
+
+        if(strlen($value) == 9){
+            $weights = array(8, 9, 2, 3, 4, 5, 6, 7);
+        }elseif(strlen($value) == 14){
+            $weights = array(2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8);
+        }else{
+            $this->context->buildViolation($constraint->message)
                 ->setParameter('%string%', $value)
                 ->addViolation();
+        }
+        
+        $sum = 0;
+        for($i = 0;$i < count($weights); $i++){
+        	$sum += $weights[$i] * $value[$i];
+        }
+        $int = $sum % 11;
+        $checksum = ($int == 10) ? 0 : $int;
+        if($checksum == $value[count($weights)]){
+            return true;	
+        }
+        
+        $this->context->buildViolation($constraint->message)
+        ->setParameter('%string%', $value)
+        ->addViolation();
+
     }
 
 }

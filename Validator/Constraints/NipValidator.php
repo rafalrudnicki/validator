@@ -10,9 +10,13 @@ class NipValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if ($value == '') {
-            return true;
+            $this->context->buildViolation($constraint->message)
+            ->setParameter('%string%', $value)
+            ->addViolation();
         }
+        
         $value = preg_replace("/[^0-9]+/", "", $value);
+        
         if (strlen($value) != 10) {
             $this->context->buildViolation($constraint->message)
                     ->setParameter('%string%', $value)
