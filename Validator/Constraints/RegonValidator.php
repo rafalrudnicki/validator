@@ -8,12 +8,10 @@ use Symfony\Component\Validator\ConstraintValidator;
 class RegonValidator extends ConstraintValidator {
 
     public function validate($value, Constraint $constraint) {
-        
-        if ($value == '') {
-            $this->context->buildViolation($constraint->message)
-            ->setParameter('%string%', $value)
-            ->addViolation();
-        }
+    	
+    	if ($value == '') {
+    		return true;
+    	}
         
         $value = preg_replace("/[^0-9]+/", "", $value);
 
@@ -28,20 +26,21 @@ class RegonValidator extends ConstraintValidator {
                 ->addViolation();
         }
         
-        $sum = 0;
-        for($i = 0;$i < count($weights); $i++){
-        	$sum += $weights[$i] * $value[$i];
-        }
-        $int = $sum % 11;
-        $checksum = ($int == 10) ? 0 : $int;
-        if($checksum == $value[count($weights)]){
-            return true;	
+        if(isset($weights)){
+	        $sum = 0;
+	        for($i = 0;$i < count($weights); $i++){
+	        	$sum += $weights[$i] * $value[$i];
+	        }
+	        $int = $sum % 11;
+	        $checksum = ($int == 10) ? 0 : $int;
+	        if($checksum == $value[count($weights)]){
+	            return true;	
+	        }
         }
         
         $this->context->buildViolation($constraint->message)
         ->setParameter('%string%', $value)
         ->addViolation();
-
     }
 
 }
